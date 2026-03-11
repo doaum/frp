@@ -17,15 +17,15 @@ package msg
 import (
 	"io"
 
-	jsonMsg "github.com/fatedier/golib/msg/json"
+	jyMsg "github.com/fatedier/frp/pkg/msg/jydiy"
 )
 
-type Message = jsonMsg.Message
+type Message = jyMsg.Message
 
-var msgCtl *jsonMsg.MsgCtl
+var msgCtl *jyMsg.MsgCtl
 
 func init() {
-	msgCtl = jsonMsg.NewMsgCtl()
+	msgCtl = jyMsg.NewMsgCtl()
 	for typeByte, msg := range msgTypeMap {
 		msgCtl.RegisterMsg(typeByte, msg)
 	}
