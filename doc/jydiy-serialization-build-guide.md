@@ -170,6 +170,25 @@ GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags noweb -
 - `-o`：指定输出文件路径。
 - `./cmd/frps`、`./cmd/frpc`：指定要编译的主程序入口。
 
+### 7.4 一条命令同时编译三个产物（本次实测成功）
+
+适用场景：
+
+- 当前分支使用 `go:embed dist`（需要先构建 `web/frps/dist`、`web/frpc/dist`）。
+- 本机已安装 `Node.js >= 20.19`（本次为 `v22.22.1`）和 `Go 1.25.8`。
+
+```bash
+cd /Users/ljh/Documents/workspace_go/frp && node -v && npm -v && cd web/frps && npm install && npm run build && cd ../frpc && npm install && npm run build && cd ../.. && mkdir -p dist/linux_amd64 dist/windows_amd64 && GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/linux_amd64/frps ./cmd/frps && GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/linux_amd64/frpc ./cmd/frpc && GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/windows_amd64/frpc.exe ./cmd/frpc && ls -lh dist/linux_amd64 dist/windows_amd64 && file dist/linux_amd64/frps dist/linux_amd64/frpc dist/windows_amd64/frpc.exe
+```
+
+该命令会一次完成：
+
+- 构建 `frps` 面板静态资源
+- 构建 `frpc` 面板静态资源
+- 交叉编译 Linux amd64: `frps`、`frpc`
+- 交叉编译 Windows amd64: `frpc.exe`
+- 输出产物大小与文件类型校验结果
+
 ---
 
 ## 8. 产物位置与验证
